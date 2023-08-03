@@ -4,7 +4,7 @@ public class State {
     private String name;
     private Set <Transition> transitions;
 
-
+    
     public State (String name){
         this.name = name;
     }

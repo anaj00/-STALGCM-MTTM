@@ -1,0 +1,17 @@
+3
+A B Q1
+A
+2
+Q1 B
+2
+a b
+2
+x y 
+2
+2
+A a a R A
+A b b R A
+X
+A b b R A
+A a a R A
+X

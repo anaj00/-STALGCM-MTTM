@@ -8,7 +8,9 @@
 import java.io.FileNotFoundException;
 import java.io.File;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.ArrayList;
+import java.util.HashSet;
 public class Mttm {
     public static void main(String[] args) {
         try {
@@ -22,7 +24,7 @@ public class Mttm {
                 //TODO: Add input validation to ensure uniqueness of state names e.g: no repeated state names be added in list.
                 State stateObj = new State(fileReader.next()); //read next entry in line
                 stateArray.add(stateObj); //add object to array
-                System.out.println("State name of index = " + i + " is: " + stateArray.get(i).getName());
+                // System.out.println("State name of index = " + i + " is: " + stateArray.get(i).getName());
             }
 
             //read initial state
@@ -33,7 +35,7 @@ public class Mttm {
                     initialState = initialState.concat(readInitial);
                 }
             }
-            System.out.println("Initial state = "+ initialState);
+            // System.out.println("Initial state = "+ initialState);
 
             //read num final states
             int numFinalStates = fileReader.nextInt();
@@ -42,7 +44,7 @@ public class Mttm {
                 String read = fileReader.next();
                 for (State state : stateArray) {
                     if(state.getName().equals(read)){
-                        System.out.println("Final state #" + i +" is = " + state.getName());
+                        // System.out.println("Final state #" + i +" is = " + state.getName());
                         finalStates.add(state);
                     }
                 }
@@ -55,7 +57,7 @@ public class Mttm {
             for(int i = 0; i < numTapeInputs; i++){
                 //TODO: Add input validation to ensure uniqueness of input alphabet e.g: no repeated output characters be added in list.
                 inputAlphabet.add(fileReader.next()); //add object to array
-                System.out.println("State input of index = " + i + " is: " + inputAlphabet.get(i));
+                // System.out.println("State input of index = " + i + " is: " + inputAlphabet.get(i));
             }
             
             //Read the set of output alphabet
@@ -65,13 +67,13 @@ public class Mttm {
             for (int i = 0; i < numTapeOutputs; i++) {
                 //TODO: Add input validation to ensure uniqueness of output alphabet e.g: no repeated output characters be added in list.
                 outputAlphabet.add(fileReader.next());
-                System.out.println("Output index: " + i + " string = " + outputAlphabet.get(i));
+                // System.out.println("Output index: " + i + " string = " + outputAlphabet.get(i));
             }
 
             //Read the number of tapes to be used in the Multi Tape Turing Machine 
             int numTapes = fileReader.nextInt();
             fileReader.nextLine();
-            System.out.println("Number of tapes of the machine is = " + numTapes);
+            // System.out.println("Number of tapes of the machine is = " + numTapes);
 
             //Read the set of transition functions
             int numTransitions = fileReader.nextInt();
@@ -86,12 +88,11 @@ public class Mttm {
 
                 //If line is an X, increment counter by 1 this signifies the end of the transition
                 //succeeding entries belong to the next should they exist
-                //TODO: flush out logic of transition parsing
                 if(line.equals("X")){
                     counter++;
                     System.out.println(counter);
                     tapeCounter = 0;
-                    System.out.println("tape counter = " + tapeCounter);
+                    System.out.println("tape counter in if = " + tapeCounter);
                 }else{
                     //Split line input into tokens using space as a delimiter
                     String[] tokens = line.split(" ");
@@ -101,13 +102,48 @@ public class Mttm {
                     int nextStateIndex = findIndex(tokens[4], stateArray);
 
                     //pass them into the transition array
+                    System.out.println("tape counter in else = " + tapeCounter);
                     transitionArray[tapeCounter][counter] = new Transition(stateArray.get(currentStateIndex), tokens[1], stateArray.get(nextStateIndex), tokens[2], tokens[3]);
-                    System.out.println(transitionArray[tapeCounter][counter]);
+                    System.out.println("Current state = " + transitionArray[tapeCounter][counter].getCurrentState().getName());
                     tapeCounter++;
-                    System.out.println("tape counter = " + tapeCounter);
                 }
-
             }
+
+            //DONE: set is initial state
+            /*
+             * get the initial state of the machine and set it to the state
+             */
+            int iniitialStateIndex = findIndex(initialState, stateArray); 
+            stateArray.get(iniitialStateIndex).setInitial(true);
+            // System.out.println(stateArray.get(iniitialStateIndex).getName()+stateArray.get(iniitialStateIndex).isInitial());
+            
+            //DONE: set is final state
+            /*
+             * For each final state in the set of final states find the index within the array list
+             * Uppon finding the index, get the associated state object and set it as a final state.
+             */
+            for (State finalState : finalStates) {
+                int finalStateIndex = findIndex(finalState.getName(), finalStates);
+                finalStates.get(finalStateIndex).setFinal(true);
+                // System.out.println("Final State = " + finalStates.get(finalStateIndex).getName() + finalStates.get(finalStateIndex).isFinal());
+            }
+            //DONE: pass transitionArray into state class
+            //get the number of transitions per state respective to their tapes
+            for (int i = 0; i < numTapes; i++) {//loop through each tape
+                for (int j = 0; j < numTransitions; j++) { //loop through each transition per tape
+                    String stateName = transitionArray[i][j].getCurrentState().getName();
+                    int stateIndex = findIndex(stateName, stateArray);
+                    stateArray.get(stateIndex).addTransition(i, transitionArray[i][j]);
+                }
+            }
+
+            for (State state : stateArray) {
+                System.out.println("transition of state " + state.getName() + " is = " + state.getTransitionMap());
+            }
+            
+
+            //TODO: GUI
+            //TODO: How to run huhu mama
 
 
 

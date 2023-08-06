@@ -84,15 +84,15 @@ public class Mttm {
             while (counter < numTransitions) {
                 //read transition lines
                 String line = fileReader.nextLine();
-                System.out.println(line);
+                // System.out.println(line);
 
                 //If line is an X, increment counter by 1 this signifies the end of the transition
                 //succeeding entries belong to the next should they exist
                 if(line.equals("X")){
                     counter++;
-                    System.out.println(counter);
+                    // System.out.println(counter);
                     tapeCounter = 0;
-                    System.out.println("tape counter in if = " + tapeCounter);
+                    // System.out.println("tape counter in if = " + tapeCounter);
                 }else{
                     //Split line input into tokens using space as a delimiter
                     String[] tokens = line.split(" ");
@@ -102,9 +102,9 @@ public class Mttm {
                     int nextStateIndex = findIndex(tokens[4], stateArray);
 
                     //pass them into the transition array
-                    System.out.println("tape counter in else = " + tapeCounter);
+                    // System.out.println("tape counter in else = " + tapeCounter);
                     transitionArray[tapeCounter][counter] = new Transition(stateArray.get(currentStateIndex), tokens[1], stateArray.get(nextStateIndex), tokens[2], tokens[3]);
-                    System.out.println("Current state = " + transitionArray[tapeCounter][counter].getCurrentState().getName());
+                    // System.out.println("Current state = " + transitionArray[tapeCounter][counter].getCurrentState().getName());
                     tapeCounter++;
                 }
             }
@@ -137,17 +137,33 @@ public class Mttm {
                 }
             }
 
-            for (State state : stateArray) {
-                System.out.println("transition of state " + state.getName() + " is = " + state.getTransitionMap());
-            }
+            // for (State state : stateArray) {
+            //     System.out.println("transition of state " + state.getName() + " is = " + state.getTransitionMap());
+            // }
             
-
-            //TODO: GUI
-            //TODO: How to run huhu mama
-
-
-
+            //Create set of tapes and initalize their input
+            Tape[] tapeArray = new Tape[numTapes];
+            for (int i = 0; i < numTapes; i++) {
+                tapeArray[i] = new Tape(stateArray, i);
+                if(fileReader.hasNextLine()){
+                    String tapeInput = fileReader.nextLine();
+                    tapeArray[i].initializeTape(tapeInput);
+                }else{
+                    tapeArray[i].initializeTape();
+                }
+                // System.out.println(tapeArray[i].getTapeContent() + " " + tapeArray[i].getStates());
+            }
             fileReader.close();
+
+            int counterist = 0;
+            System.out.println("ebefore whiel");
+            while(tapesNotFinished(tapeArray)){
+                for (int i = 0; i < tapeArray.length; i++) {
+                    tapeArray[i].runTape();
+                }      
+            }
+            System.out.println("out of while");
+
         } catch (FileNotFoundException e) {
             // TODO: handle exception
             System.out.println("File does not exist");
@@ -162,5 +178,19 @@ public class Mttm {
         }
         return -1;
     }
+    private static boolean tapesNotFinished(Tape[] tapes){
+        int numTapes = tapes.length;
+        int finishedCounter = 0;
 
+        for (Tape tape : tapes) {
+            if(tape.isFinished()){
+                finishedCounter++;
+            }
+        }
+        if(finishedCounter != numTapes){
+            return true;
+        }else{
+            return false;
+        }
+    }
 }

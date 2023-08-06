@@ -1,13 +1,34 @@
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Tape {
     private ArrayList<String> left;
     private ArrayList<String> right;
+    private boolean isRejected = false;
+    private boolean isAccepted = false;
+    private ArrayList<State> states;
+    private State currentState;
+    private int tapeNumber;
+
 
     public Tape() {
-        left = new ArrayList<String>();
-        right = new ArrayList<String>();
+        left = new ArrayList<>();
+        right = new ArrayList<>();
+    }
+
+    public Tape(List<State> inputArray, int number) {
+        this.left = new ArrayList<>();
+        this.right = new ArrayList<>();
+        this.tapeNumber = number;
+        this.states = (ArrayList<State>) inputArray;
+        for (State state : inputArray) {
+            if(state.isInitial()){
+                this.currentState = state;
+            }
+        }
     }
 
     // Returns the right side of the tape
@@ -43,7 +64,7 @@ public class Tape {
 
         right.add("_");
         left.add("_");
-
+        // initializeMap();
     }
 
     // Returns the content of the tape through a string
@@ -93,6 +114,55 @@ public class Tape {
     // Writes the symbol where the head
     public void writeSymbol(String symbol) {
         right.set(0, symbol);
+    }
+
+    public boolean isFinished(){
+        if (this.isRejected) {
+            return true;
+        } else {
+            return this.isAccepted;
+        }
+    }
+
+    public boolean isAccepted(){
+        return this.currentState.isFinal();
+    }
+
+    public ArrayList<State> getStates() {
+        return states;
+    }    
+
+    public void runTape(){
+        System.out.println("Tape number = " + tapeNumber);
+        if(!currentState.isFinal()){
+            applyTransition();
+        }else{
+            System.out.println("Here");
+        }   
+        
+    }
+    public int getNumber(){
+        return this.tapeNumber;
+    }
+
+    private void applyTransition(){
+        ArrayList<Transition> apply = currentState.getTransitionMap().get(tapeNumber);
+        for (Transition transition : apply) {
+            String transitionRead = transition.getReadSymbol();
+            System.out.println("read = " + readSymbol() + " state name = " + currentState.getName() );
+            if(readSymbol().equals(transitionRead)){
+                writeSymbol(transition.getWriteSymbol());
+                this.currentState = transition.getNextState();
+                step(transition.getStepDirection());
+                // System.out.println("Tape number = " + this.tapeNumber + " " + currentState.getName());
+                printTapeContent();
+                if(currentState.isFinal()){
+                    this.isAccepted = true;
+                }
+            }else{
+                this.isRejected = true;
+            }
+        }
     }
 
     public static void main(String[] args) {

@@ -1,19 +1,15 @@
 3
-A B Q1
-A
+q0 q1 q2
+q0
 1
-Q1
+q2
 2
 a b
 2
-x y 
+a b 
 2
 2
-A b x R B 
-A a x R B 
-X
-B b x R A 
-B a x R Q1
-X
+q0 a b q1 a a R L
+q1 b a q2 a a L R
 bbbbbaaaa
-aaaaaaaaa
+abbababa

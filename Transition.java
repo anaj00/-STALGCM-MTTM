@@ -1,19 +1,19 @@
 public class Transition {
     private State currentState;
-    private String readSymbol;
+    private String[] readSymbol;
     private State nextState;
-    private String writeSymbol;
-    private String stepDirection;
+    private String[] writeSymbol;
+    private String[] stepDirection;
 
 
     // Initializes the transition function
     // Q x Γ -> Q x Γ x R
-    public Transition(State currentState, String readSymbol, State nextState, String writeSymbol, String stepDirection){
+    public Transition(State currentState, String[] readSymbols, State nextState, String[] writeSymbols, String[] stepDirections){
         this.currentState = currentState;
-        this.readSymbol = readSymbol;
+        this.readSymbol = readSymbols;
         this.nextState = nextState;
-        this.writeSymbol = writeSymbol;
-        this.stepDirection = stepDirection;
+        this.writeSymbol = writeSymbols;
+        this.stepDirection = stepDirections;
     }
 
 
@@ -21,7 +21,7 @@ public class Transition {
         return this.currentState;
     }
 
-    public String getReadSymbol() {
+    public String[] getReadSymbol() {
         return this.readSymbol;
     }
 
@@ -29,11 +29,11 @@ public class Transition {
         return this.nextState;
     }
 
-    public String getWriteSymbol() {
+    public String[] getWriteSymbol() {
         return this.writeSymbol;
     }
 
-    public String getStepDirection() {
+    public String[] getStepDirection() {
         return this.stepDirection;
     }
 }

@@ -11,6 +11,8 @@ public class Tape {
     private boolean isAccepted = false;
     private ArrayList<State> states;
     private State currentState;
+    private String writeSymbol;
+    private State nextState;
     private int tapeNumber;
 
 
@@ -29,6 +31,7 @@ public class Tape {
                 this.currentState = state;
             }
         }
+        
     }
 
     // Returns the right side of the tape
@@ -64,7 +67,6 @@ public class Tape {
 
         right.add("_");
         left.add("_");
-        // initializeMap();
     }
 
     // Returns the content of the tape through a string
@@ -97,7 +99,8 @@ public class Tape {
             right.add(0, temp);
             left.remove(0);
             left.add("_");
-        } else if (symbol.equals("R")) {
+        } 
+        if (symbol.equals("R")) {
             String temp = right.get(0);
             left.add(0, temp);
             right.remove(0);
@@ -132,33 +135,37 @@ public class Tape {
         return states;
     }    
 
+
+    public State getNextState(){
+        return this.nextState;
+    }
+
+    public String getWrite(){
+        return this.writeSymbol;
+    }
+
     public void runTape(){
-        System.out.println("Tape number = " + tapeNumber);
-        if(!currentState.isFinal()){
-            applyTransition();
-        }else{
-            System.out.println("Here");
-        }   
-        
+        applyTransition();
     }
     public int getNumber(){
         return this.tapeNumber;
     }
 
+    public State getCurrentState(){
+        return this.currentState;
+    }
+
     private void applyTransition(){
-        ArrayList<Transition> apply = currentState.getTransitionMap().get(tapeNumber);
-        for (Transition transition : apply) {
-            String transitionRead = transition.getReadSymbol();
-            System.out.println("read = " + readSymbol() + " state name = " + currentState.getName() );
-            if(readSymbol().equals(transitionRead)){
-                writeSymbol(transition.getWriteSymbol());
+        String read = readSymbol();
+        System.out.println(read);
+        ArrayList<Transition> list = currentState.getTransitionList();
+        for (Transition transition : list) {
+            if(read.equals(transition.getReadSymbol()[tapeNumber])){
+                this.writeSymbol = transition.getWriteSymbol()[tapeNumber];
+                writeSymbol(writeSymbol);
+                step(transition.getStepDirection()[tapeNumber]);
+                this.nextState =  transition.getNextState();
                 this.currentState = transition.getNextState();
-                step(transition.getStepDirection());
-                // System.out.println("Tape number = " + this.tapeNumber + " " + currentState.getName());
-                printTapeContent();
-                if(currentState.isFinal()){
-                    this.isAccepted = true;
-                }
             }else{
                 this.isRejected = true;
             }

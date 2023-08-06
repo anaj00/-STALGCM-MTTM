@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class State {
     private String name;
-    private Map<Integer, ArrayList<Transition>> transitionMap = new HashMap<>();
+    private ArrayList<Transition> transitionList = new ArrayList<>();
 
 
     private boolean isInitial = false, isFinal = false;
@@ -38,20 +38,12 @@ public class State {
         this.isFinal = isFinal;
     }
 
-    public void addTransition(int tape, Transition object){
-        //check if tape already exists 
-        if(transitionMap.containsKey(tape)){
-            transitionMap.get(tape).add(object); // add transition object into the tape mapping 
-        }
-        //add the tape number into the map and add the object
-        else{
-            transitionMap.put(tape, new ArrayList<>()); 
-            transitionMap.get(tape).add(object);
-        }
+    public void addTransition(Transition object){
+        transitionList.add(object);
     }
 
-    public Map<Integer, ArrayList<Transition>> getTransitionMap() {
-        return transitionMap;
+    public ArrayList<Transition> getTransitionList() {
+        return transitionList;
     }
 
     
